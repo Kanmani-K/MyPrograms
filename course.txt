@@ -1,0 +1,123 @@
+import java.io.*;
+class CourseRegistration
+{
+	String name,city,ug,reg_course;
+	int cc,total,avg;
+	int sem[]=new int[6];
+	boolean flag;
+	DataInputStream dis=new DataInputStream(System.in);
+	void getDetails()throws IOException
+	{
+		System.out.println("Enter name: ");
+		name=dis.readLine();
+		System.out.println("Enter Your UG Course: ");
+		ug=dis.readLine();
+		System.out.println("Enter your 6 semester percentages: ");
+		for(int i=0;i<6;i++)
+		{
+			System.out.print("For Semester " +(i+1) +":");
+			sem[i]=Integer.parseInt(dis.readLine());
+		}
+		System.out.println("Enter the course code: ");
+		cc=Integer.parseInt(dis.readLine());
+		System.out.println("\nEnter Your address: ");
+		System.out.print("\nCity Name:");
+		city=dis.readLine();
+		switch(cc) 
+		{
+			case 110:
+				reg_course="EEE";
+				break;
+			case 111:
+				reg_course="ECE";
+				break;
+			case 112:
+				reg_course="CS & IT";
+				break;
+			case 113:
+				reg_course="CIVIL";
+				break;
+		}
+	}
+	void displayCourses()
+	{
+		System.out.println("1.ME-EEE -----> 110");
+		System.out.println("2.ME-ECE -----> 111");
+		System.out.println("3.ME-(CS &IT)------>112");
+		System.out.println("3.ME-(CIVIL)------>113");
+		System.out.println("Kindly note your Course Code");
+	}
+	void display()
+	{
+		if(flag)
+		{
+			System.out.println("-------------------------------------------------------------------------------------------------");
+			System.out.println("---------------------STUDENT'S DETAIL-------------------------------------------------");
+			System.out.println("--------------------------------------------------------------------------------------------------");
+			System.out.println("NAME			:"+name);
+			System.out.println("UG COURSE		:"+ug);
+			System.out.println("UG PERCENTAGE		:"+avg);
+			System.out.println("REGISTERED COURSE	:"+reg_course);
+		}
+		else
+		{
+			System.out.println("SORRY!!!!! DUE TO THE ELIGIBILITY CRITERIA YOUR APPLICATION IS REJECTED");
+		}
+	}
+	synchronized void register(int s[],String rc,CourseRegistration obj)
+	{
+		int sum=0;
+		for(int i=0;i<6;i++)
+		{
+			sum=sum+s[i];
+		}	
+		obj.total=sum;
+		obj.avg=total/6;
+		if ((avg>75 && rc.equals("EEE")) || (avg>80 && rc.equals("ECE")) || (avg>85 && rc.equals("CS & IT")) || (avg>90 && rc.equals("CIVIL")))
+		{
+			System.out.println("Successfully Register....");
+			obj.flag=true;
+		}
+		else {
+			System.out.println("You are not eligible...");
+			obj.flag=false;
+		}
+	}
+	
+}
+class Student implements Runnable
+{
+	CourseRegistration obj1;
+	int s[ ]=new int[6];
+	String msg;
+	Thread t;
+	public Student(int marks[],String rc,CourseRegistration obj)
+	{
+		obj1=obj;
+		s=marks;
+		msg=rc;
+		t=new Thread(this);
+		t.start();
+	}
+	public void run() 
+	{
+			obj1.register(s,msg,obj1);
+			obj1.display();
+	}
+}
+class MainClass
+{
+	public static void main(String args[])throws IOException
+	{
+		CourseRegistration stu1=new CourseRegistration();
+		CourseRegistration stu2=new CourseRegistration();
+		CourseRegistration d=new CourseRegistration();
+		System.out.println("------------------------------Welcome to the Course Registration------------------");
+		System.out.println("Courses");	
+		d.displayCourses();
+		stu1.getDetails();
+		stu2.getDetails();
+		Student t1=new Student(stu1.sem,stu1.reg_course,stu1);
+		Student t2=new Student(stu2.sem,stu2.reg_course,stu2);
+	}
+}		
